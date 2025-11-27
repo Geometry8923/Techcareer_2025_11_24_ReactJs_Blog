@@ -14,6 +14,7 @@ import {withTranslation} from 'react-i18next';
 import Swal from "sweetalert2"
 import toast from "react-hot-toast"
 import {start} from "@popperjs/core";
+import ReusabilityToast from "../../reusability/ReusabilityToast";
 
 // FUNCTION
 function BlogCategoryList({props, t, i18n}) {
@@ -418,11 +419,45 @@ function BlogCategoryList({props, t, i18n}) {
     // RETURN
     return (
         <React.Fragment>
+            {/*Toaster provider (SAğ,alt, global varsayılan)*/}
+            <ReusabilityToast/>
+
             <br/>
-            <h1 class="text-center display-5 mt-5 mb-5">{t('blog_category_list')}</h1>
-            <Link className="btn btn-primary ms-2 me-4" to="/blog/category/api/v1/create">
-                {t('create')}
-            </Link>
+            <h1 class="text-center display-5 mt-5 mb-5 animate_animated animate_fadeInDown">{t('blog_category_list')}</h1>
+
+            {/*Filter+ Datalist+Yeni kategori Butonu*/}
+            <div className="container mb-3">
+
+                {/*SEARCH INPUT*/}
+                <div className="row align-items-end g-2">
+                    <div className="col-md-4">
+                        <label htmlFor="" className="form-label fw-semibold">
+                            Filtrele (ID/ isim/ Tarih)
+                        </label>
+                        <input
+                        type="search"
+                        list="blogCategoryNames"
+                        className="form-control"
+                        placeholder="Ara ..."
+                        value={searchTerm}
+                        onChange={(e)=> setSearchTerm(e.target.value)}
+                        />
+                        <datalist id="blogCategoryNames">
+                            {blogCategoryApiListData.map((cat)=>(
+                                <option key={cat.categoryId} value={cat.categoryName} />
+                            ))}
+                        </datalist>
+                    </div>{/*search*/}
+
+                </div>{/*row*/}
+
+                {/*FILTER*/}
+                <div className="col-md-3">
+                    <label htmlFor="" className="form-label fw-semibold">Sayfa başına kayıt</label>
+
+                </div>
+            </div> {/*container*/}
+
 
             <div className="table-responsive">
                 <table className="table table-primary table-striped table-responsive mb-4">
