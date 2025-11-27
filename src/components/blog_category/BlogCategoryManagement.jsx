@@ -299,28 +299,41 @@ function BlogCategoryList({props, t, i18n}) {
     }; //end handleChange
 
 
-
     // =======================================================================
     // DELETE (SweetAlert2 + TOAST )
     // =======================================================================
-    const setDeleteBlogCategory = (id) => {
-        if (window.confirm(id + ' nolu datayı silmek istiyor musunuz ?')) {
-            BlogCategoryApiService.objectApiDelete(id)
-                .then((response) => {
-                    if (response.status === 200) {
-                        listManipulationAfter();
-                        navigate('blog/category/list');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Blog Category Delete: ', error);
-                    window.location = 'blog/category/list';
-                });
-        } else {
-            alert(`${id} nolu data silinmedi. `);
-            window.location = 'blog/category/list';
+    const handleDelete = async (category) => {
+
+        // Sweet Alert
+        // if (window.confirm(id + ' nolu datayı silmek istiyor musunuz ?')) { }
+        const result = await Swal.fire({
+            title: `${category.categoryName} Silinsin mi?`,
+            text:"Bu işlemi geri alamazsın",
+            icon:"warning",
+            showCancelButton:true,
+            confirmButtonText: "Evet, Sil",
+            cancelButtonText:"Vazgeç",
+        });
+        
+        // Eğer kullanıcı silmekten vazgeçmişse
+        if(!result.isConfirmed)
+            return;
+
+        // Eğer kullanıcı silmek istiyorsa
+        try{
+            setError("");
+          const response= await  BlogCategoryApiService.objectApiDelete(category.categoryId);
+            if(response.status===200){
+                await fetchBlogList();
+                closeModal();
+                showToast("Blog Kategori Silindi","delete");
+            }
+        }catch (e) {
+            console.error("handleSubmit error :",e) ;
+            setError("Blog Kategorisinde bir hata meydana geldi");
+            //window.location = 'blog/category/list';
         }
-    }; // end setDeleteBlogCategory
+    }; // end handleDelete
 
     // =======================================================================
     // listManipulationAfter
